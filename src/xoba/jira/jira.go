@@ -16,5 +16,5 @@ func init() {
 	add := func(name, desc string, f func([]string)) {
 		tool.Register(tool.Named(name+","+desc, tool.RunFunc(f)))
 	}
-	add("test", "just a test", tools.Test)
+	add("comment", "comment on a jira issue", tools.Comment)
 }
