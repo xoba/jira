@@ -11,14 +11,16 @@ for getting started by cloning, building, etc:
     source goinit.sh
     ./install.sh
 
-to get help, run the executable without any args: ```jira```. 
+to get generic help, run the executable ```jira``` without any args.
 
 to get help on listing, or actually listing your issues:
 
     jira list -help
     jira list -reporter mra
     
-you could put exports like these into your ~/.bashrc file for convenience:
+same story goes for creating issues, deleting issues, and commenting on them.
+    
+you should put exports like these into your ~/.bashrc file for convenience:
 
     export JIRA_USERNAME=joe.smith
     export JIRA_PASSWORD=abc123
