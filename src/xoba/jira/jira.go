@@ -17,4 +17,7 @@ func init() {
 		tool.Register(tool.Named(name+","+desc, tool.RunFunc(f)))
 	}
 	add("comment", "comment on a jira issue", tools.Comment)
+	add("hook.install", "install git hooks", tools.InstallGitHooks)
+	add("hook.commit-msg", "git commit hook", tools.CommitHook)
+	add("hook.post-commit", "git postcommit hook", tools.PostCommitHook)
 }

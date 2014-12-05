@@ -22,10 +22,6 @@ you could put exports like these into your ~/.bashrc file for convenience:
   export JIRA_URL=http://www.example.com/jira
 `
 
-func Test(args []string) {
-	fmt.Println("howdy!")
-}
-
 func Comment(args []string) {
 	var key, comment string
 	flags := tool.FlagsWithDoc("comment", doc)
