@@ -13,7 +13,7 @@ for getting started by cloning, building, etc:
 
 to get generic help, run the executable ```jira``` without any args.
 
-to get help on listing, or actually listing your issues:
+to get help on issue-listing sub-command, or actually listing your issues:
 
     jira list -help
     jira list -reporter mra
