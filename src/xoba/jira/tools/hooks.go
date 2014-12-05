@@ -75,7 +75,7 @@ func commitHash() string {
 }
 
 func commitMessage() string {
-	return commitFormat("%B")
+	return fmt.Sprintf("%s\n%s\n", commitFormat("%s"), commitFormat("%b"))
 }
 
 func commitFormat(f string) string {

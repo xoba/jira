@@ -70,6 +70,9 @@ func apiCall(content interface{}, method, path string, val StatusCodeValidator, 
 		}
 	}
 	req, err := http.NewRequest(method, fmt.Sprintf("%s/rest/api/2/%s", _url, path), r)
+	if err != nil {
+		return nil, err
+	}
 	auth(req)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36")
 	req.Header.Set("Content-Type", "application/json")
