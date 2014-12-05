@@ -20,6 +20,10 @@ to get help on listing, or actually listing your issues:
     
 same story goes for creating issues, deleting issues, and commenting on them.
     
+for incorporating jira into your git workflow, you can install hooks with ```jira hook.install```
+(caution: overwrites existing hooks), then if the first token in your git commit subject is an 
+issue ID, your message and commit info will be created as a comment.
+
 you should put exports like these into your ~/.bashrc file for convenience:
 
     export JIRA_USERNAME=joe.smith
