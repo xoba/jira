@@ -6,7 +6,7 @@ for use in git hooks, etc...
 
 for getting started by cloning, building, etc:
 
-    git clone --recursive git@github.com:xoba/jira.git
+    git clone --recursive https://github.com/xoba/jira.git
     cd jira
     source goinit.sh
     ./install.sh
