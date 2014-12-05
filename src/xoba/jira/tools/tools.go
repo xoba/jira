@@ -6,12 +6,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/xoba/goutil/tool"
 )
 
 const doc = `
@@ -22,40 +21,24 @@ you could put exports like these into your ~/.bashrc file for convenience:
   export JIRA_URL=http://www.example.com/jira
 `
 
-func Comment(args []string) {
-	var key, comment string
-	flags := tool.FlagsWithDoc("comment", doc)
-	flags.StringVar(&key, "key", "", "key of issue to comment on")
-	flags.StringVar(&comment, "comment", "", "the comment")
-	parseFlags(flags, args)
-	if err := validateAllStringArgs("key", key, "comment", comment); err != nil {
-		log.Fatal(err)
-	}
-	resp, err := commentOnIssue(key, comment)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(resp)
-}
-
-func commentOnIssue(key, comment string) (*CommentResponse, error) {
-	content := map[string]interface{}{
-		"body": comment,
-	}
-	var out CommentResponse
-	parser := JsonParser(&out)
-	_, err := apiCall(content, "POST", fmt.Sprintf("issue/%s/comment", key), ExpectedCodeValidator(201), parser)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
 func JsonParser(i interface{}) ResponseParser {
 	return func(resp *http.Response) (interface{}, error) {
 		d := json.NewDecoder(resp.Body)
 		if err := d.Decode(i); err != nil {
 			return nil, err
+		}
+		return i, nil
+	}
+}
+
+func NilParser(i interface{}) ResponseParser {
+	return func(resp *http.Response) (interface{}, error) {
+		if _, err := io.Copy(ioutil.Discard, resp.Body); err != nil {
+			return nil, err
+		}
+		switch x := i.(type) {
+		case *string:
+			*x = "ok"
 		}
 		return i, nil
 	}
@@ -73,11 +56,18 @@ type ResponseParser func(*http.Response) (interface{}, error)
 func apiCall(content interface{}, method, path string, val StatusCodeValidator, parser ResponseParser) (interface{}, error) {
 	var r io.Reader
 	if content != nil {
-		buf, err := json.Marshal(content)
-		if err != nil {
-			return nil, err
+		switch c := content.(type) {
+		case []byte: // it's already json
+			r = bytes.NewReader(c)
+		case string: // it's already json
+			r = strings.NewReader(c)
+		default:
+			buf, err := json.Marshal(c)
+			if err != nil {
+				return nil, err
+			}
+			r = bytes.NewReader(buf)
 		}
-		r = bytes.NewReader(buf)
 	}
 	req, err := http.NewRequest(method, fmt.Sprintf("%s/rest/api/2/%s", _url, path), r)
 	auth(req)
@@ -92,14 +82,6 @@ func apiCall(content interface{}, method, path string, val StatusCodeValidator, 
 		return nil, fmt.Errorf("bad status: %q\n", resp.Status)
 	}
 	return parser(resp)
-}
-
-type CommentResponse struct {
-	Self string
-}
-
-func (c CommentResponse) String() string {
-	return ToString(c)
 }
 
 func client() *http.Client {
